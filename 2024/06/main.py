@@ -38,14 +38,23 @@ def test_direction(grid, direction, position , direction_dict) -> bool:
     guard_test_direction = turn(direction)
     guard_test_position = position
 
+    guard_test_init_pos = position
+    guard_test_inti_dir = direction
+    print(guard_test_init_pos, guard_test_inti_dir)
+    print("--------------------")
+    visited = set()
 
     while guard_test_position[0] > 0 and guard_test_position[0] < len(grid) - 1 and guard_test_position[1] > 0 and guard_test_position[1] < len(grid[0]) - 1:
         guard_next_test_position = list(map(add, guard_test_position, direction_dict[guard_test_direction]))
+        if (str(guard_test_position), str(guard_test_direction)) in visited:
+            return True
+        #if str(guard_test_position) in visited_turn:
+        #    return True
         if grid[guard_next_test_position[0]][guard_next_test_position[1]] == "#":
-            if grid[guard_test_position[0]][guard_test_position[1]] == "+":
-                return True
-            return False
-        guard_test_position = guard_next_test_position
+            guard_test_direction = turn(guard_test_direction)
+        else:
+            visited.add((str(guard_test_position), str(guard_test_direction)))
+            guard_test_position = guard_next_test_position
     return False
 
 
@@ -62,7 +71,7 @@ def main():
     guard_direction = "U"
     guard_test_direction = ""
 
-    grid = read_input("tests")
+    grid = read_input("in")
     guard_position = get_guard_position(grid)
     walking = True
     visited = set()
@@ -80,9 +89,10 @@ def main():
             guard_direction = turn(guard_direction)
 
         else:
+            grid[guard_next_position[0]][guard_next_position[1]] = "#"
             if test_direction(grid, guard_direction, guard_position, direction_dict):
                 possible += 1
-
+            grid[guard_next_position[0]][guard_next_position[1]] = "."
             guard_position = guard_next_position
 
             if str(guard_position) not in visited:
